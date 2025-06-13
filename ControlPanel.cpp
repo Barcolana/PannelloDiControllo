@@ -1,65 +1,66 @@
 #include "ControlPanel.h"
-#include <wx/tglbtn.h> // Necessario per wxToggleButton
-
+#include <wx/tglbtn.h>   // wxToggleButton
+#include <wx/slider.h>   // wxSlider
 
 // Costruttore del pannello di controllo
 ControlPanel::ControlPanel(wxWindow* parent) : wxPanel(parent, wxID_ANY) {
-    // Layout verticale per organizzare i componenti
     wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
 
-    // Titolo del pannello
     wxStaticText* title = new wxStaticText(this, wxID_ANY, "Quadro di controllo");
 
-    // Pulsanti Avvia e Ferma con dimensioni personalizzate
     wxButton* btnStart = new wxButton(this, wxID_ANY, "Avvia", wxDefaultPosition, wxSize(100, 30));
     wxButton* btnStop = new wxButton(this, wxID_ANY, "Ferma", wxDefaultPosition, wxSize(100, 30));
 
-    // Barra di avanzamento
     wxGauge* gauge = new wxGauge(this, wxID_ANY, 100);
 
-    // ✅ Interruttore (Toggle Button)
     wxToggleButton* toggle = new wxToggleButton(this, wxID_ANY, "Interruttore");
 
-    // Aggiunta dei componenti al sizer (layout manager)
+    wxStaticText* knobLabel = new wxStaticText(this, wxID_ANY, "Volume");
+    wxSlider* volumeKnob = new wxSlider(this, wxID_ANY, 50, 0, 100, wxDefaultPosition, wxSize(200, -1), wxSL_HORIZONTAL);
+
+    // Label che mostra il valore del volume
+    wxStaticText* volumeValue = new wxStaticText(this, wxID_ANY, "50%");
+
     vbox->Add(title, 0, wxALL | wxALIGN_CENTER, 10);
     vbox->Add(btnStart, 0, wxALL | wxALIGN_CENTER, 5);
     vbox->Add(btnStop, 0, wxALL | wxALIGN_CENTER, 5);
     vbox->Add(gauge, 0, wxALL | wxEXPAND, 5);
-    vbox->Add(toggle, 0, wxALL | wxALIGN_CENTER, 5);  // Aggiunta dell’interruttore
+    vbox->Add(toggle, 0, wxALL | wxALIGN_CENTER, 5);
 
-    SetSizer(vbox); // Applica il layout al pannello
+    vbox->Add(knobLabel, 0, wxALL | wxALIGN_CENTER, 5);
+    vbox->Add(volumeKnob, 0, wxALL | wxALIGN_CENTER, 5);
+    vbox->Add(volumeValue, 0, wxALL | wxALIGN_CENTER, 5);
 
-    // Evento pulsante "Avvia"
+    SetSizer(vbox);
+
     btnStart->Bind(wxEVT_BUTTON, [gauge](wxCommandEvent&) {
-        gauge->SetValue(50); // Simula un progresso al 50%
+        gauge->SetValue(50);
     });
 
-    // Evento pulsante "Ferma"
     btnStop->Bind(wxEVT_BUTTON, [gauge](wxCommandEvent&) {
-        gauge->SetValue(0); // Riporta la barra a zero
+        gauge->SetValue(0);
     });
 
-    // Evento per l’interruttore toggle
     toggle->Bind(wxEVT_TOGGLEBUTTON, [toggle](wxCommandEvent& e) {
-    bool stato = e.GetInt(); // true = ON, false = OFF
+        bool stato = e.GetInt();
+        if (stato) {
+            toggle->SetLabel("Acceso");
+            toggle->SetBackgroundColour(*wxGREEN);
+        } else {
+            toggle->SetLabel("Spento");
+            toggle->SetBackgroundColour(*wxRED);
+        }
+        toggle->Refresh();
+    });
 
-    if (stato) {
-        toggle->SetLabel("Acceso");
-        toggle->SetBackgroundColour(*wxGREEN); // Verde se acceso
-    } else {
-        toggle->SetLabel("Spento");
-        toggle->SetBackgroundColour(*wxRED); // Rosso se spento
-    }
-
-    toggle->Refresh(); // Aggiorna il colore a schermo
-});
-
- 
-
+    volumeKnob->Bind(wxEVT_SLIDER, [volumeValue](wxCommandEvent& e) {
+        int volume = e.GetInt();
+        volumeValue->SetLabel(wxString::Format("%d%%", volume));
+    });
 }
 
-// Definizione del frame principale che contiene il pannello
+// Frame principale
 MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, "Dashboard esempio") {
-    ControlPanel* panel = new ControlPanel(this); // Crea il pannello e lo collega alla finestra
-    SetSize(400, 350); // Imposta la dimensione della finestra
+    ControlPanel* panel = new ControlPanel(this);
+    SetSize(400, 400);
 }
