@@ -1,0 +1,23 @@
+# Ignora file eseguibili
+*.exe
+
+# Ignora file oggetto e intermedi
+*.o
+*.obj
+
+# Ignora cartella di configurazione di VS Code
+.vscode/
+
+# Ignora file temporanei e di backup
+*.log
+*.tmp
+*.bak
+
+# Ignora file di output generati dal compilatore o linker
+*.out
+*.dll
+*.lib
+
+# Ignora cartelle di build
+build/
+bin/

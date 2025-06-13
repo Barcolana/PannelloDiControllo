@@ -1,0 +1,24 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compila wxWidgets",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "main.cpp",
+                "ControlPanel.cpp",
+                "-o",
+                "PannelloDiControllo.exe",
+                "`wx-config --cxxflags --libs`"
+            ],
+            "options": {
+                "shell": {
+                    "executable": "C:\\msys64\\usr\\bin\\bash.exe",
+                    "args": ["-c"]
+                }
+            },
+            "problemMatcher": []
+        }
+    ]
+}
